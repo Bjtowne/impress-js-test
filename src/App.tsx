@@ -1,34 +1,43 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
+import {useEffect, useState} from "react";
+import {FirstSlide} from "./FirstSlide";
+import {SecondSlide} from "./SecondSlide";
+import {ThirdSlide} from "./ThirdSlide";
+import {FourthSlide} from "./FourthSlide";
 
 function App() {
-  const [count, setCount] = useState(0);
+  useEffect(() => {
+    const win = window as any;
+    if (!win.loadImpress) {
+      win.loadImpress = () => {
+        const impressScript = document.createElement('script');
+        impressScript.src = 'https://cdn.jsdelivr.net/gh/impress/impress.js@2.0.0/js/impress.js'
+        document.head.appendChild(impressScript)
+        win.onload = () => {
+          win.impress().init()
+          document.addEventListener("impress:init", function (event) {
+            console.log('init', event);
+          });
+          document.addEventListener("impress:stepenter", function (event) {
+            console.log('stepenter', event);
+          });
+        }
+      }
+      win.loadImpress();
+    }
+  }, [])
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <>
+      <div id="impress" data-width="1920" data-height="1080">
+        <div id="first-slide" key="first-slide" className="step first-slide" data-rel-rotate-y="20">
+          <FirstSlide/>
+        </div>
+        <SecondSlide/>
+        <ThirdSlide/>
+        <FourthSlide/>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    </>
   );
 }
 
